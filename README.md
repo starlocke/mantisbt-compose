@@ -40,4 +40,4 @@ cd mantisbt-compose
 docker-compose up -d
 ```
 
-http://localhost:10200/ should then be available.
+http://vanadiel:10200/admin/index.php should then be available.
