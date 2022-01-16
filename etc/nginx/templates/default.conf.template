@@ -1,0 +1,69 @@
+server {
+    listen       80;
+    server_name  localhost;
+    root         /application;
+    index        index.html index.php;
+    charset      utf-8;
+
+    #charset koi8-r;
+    #access_log  /var/log/nginx/host.access.log  main;
+
+    location / {
+        try_files $uri /index.php$is_args$args;
+    }
+
+    location /css {
+        auth_basic off;
+    }
+
+    location /img {
+        auth_basic off;
+    }
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /var/www;
+    }
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    location ~ ^/index\.php(/|$) {
+        fastcgi_pass   php:9000;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param HTTPS off;
+    }
+
+    # == debug config (allows info.php) ==
+    location ~ info\.php$ {
+        fastcgi_pass   php:9000;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param HTTPS off;
+    }
+    # serve all php files
+    location ~ ^/project/(?<project_id>[0-9]+)/([a-z_]+\.php) {
+        rewrite ^/project/([0-9]+)/([a-z_]+\.php)$ /$2 last;
+        fastcgi_pass   php:9000;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PROJECT_ID_OVERRIDE $project_id;
+        fastcgi_param HTTPS off;
+    }
+
+    location ~ \.php {
+        fastcgi_pass   php:9000;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PROJECT_ID_OVERRIDE $project_id;
+        fastcgi_param HTTPS off;
+    }
+}

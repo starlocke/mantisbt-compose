@@ -1,0 +1,41 @@
+version: '3.6'
+
+services:
+  php:
+    image: starlocke/php-7.3-max:latest
+    depends_on:
+      - mysql
+    volumes:
+      - './mantisbt:/application'
+      - './xdebug.ini:/etc/php/7.3/fpm/conf.d/xdebug.ini'
+      - './xdebug.ini:/etc/php/7.3/cli/conf.d/xdebug.ini'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    working_dir: /application
+    expose:
+      - "9000"
+  web:
+    image: nginx:1.19-alpine
+    volumes:
+      - ./mantisbt/:/application
+      - ./etc/nginx/templates:/etc/nginx/templates
+    environment:
+      DEBUG: 'true'
+    ports:
+      - "10200:80"
+    working_dir: /application
+    depends_on:
+      - php
+      - mysql
+  mysql:
+    image: 'mysql:8'
+    ports:
+      - '33200:3306'
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mantisdb
+    volumes:
+      - 'mysqlvol:/var/lib/mysql'
+volumes:
+  mysqlvol: null
