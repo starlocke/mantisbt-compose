@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd mantisbt
-docker run --rm --interactive --tty --volume $(pwd):/app --user $(id -u):$(id -g) composer install
+docker run --rm --interactive --tty --volume $(pwd):/app --user $(id -u):$(id -g) composer install --ignore-platform-reqs
 cd -
