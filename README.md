@@ -1,5 +1,8 @@
 # Introduction
 
+This is a docker-compose package to quickly get a development copy of MantisBT
+up and running. All credentials and secrets in this file (if any) are purely
+dummy values.
 
 # Requirements
 
@@ -8,20 +11,6 @@
 - Linux-like Host OS
 - GitHub
   - It is expected that you're using GitHub with SSH keys.
-  - It is also expected that you've set up an auth token for (PHP) "Composer"
-    operations.
-
-MEMO: Bootstraping will require that you set up a GitHub token for Composer operations.
-It is recommended that you keep a copy of that token in a password manager for future
-reference.
-
-```
-GitHub API limit (0 calls/hr) is exhausted, could not fetch https://api.github.com/repos/mantisbt/securimage/contents/composer.json?ref=3f5a84fd80b1a35d58332896c944142713a7e802.
-Create a GitHub OAuth token to go over the API rate limit. You can also wait until ? for the rate limit to reset.
-
-Head to {YOUR_UNIQUE_URL}
-to retrieve a token. It will be stored in "/tmp/auth.json" for future use by Composer.
-```
 
 # Starting up
 
@@ -40,4 +29,34 @@ cd mantisbt-compose
 docker-compose up -d
 ```
 
-http://vanadiel:10200/admin/index.php should then be available.
+Do basic administrative tasks:
+
+- Navigate to http://localhost:10200/admin/install.php to install the database
+    - Ensure that you clear all MANTISBT-related cookies for this domain in your browser,
+      or use a "private session" for the same effect; or else, you may encounter an error
+      where MantisBT's installer fails at creating all the tables because it attempts to
+      validate the COOKIE-based authentication/credentials from a previous installation.
+- Supply the dummy password: `password`
+- Click the "Install/Upgrade Database" button.
+- Navigate to the "login" page.
+- The default user/pass is `administrator/root`
+- Change the administrator's password to get rid of the warning/nagging.
+- Select the "Manage" (gear icon) button from the left-side navigation pane.
+    - You may be prompted for a password.
+- Select the "Manage Projects" tab
+- Create the first project
+    - Fill in its info...
+- Create the second project
+    - Fill in its info...
+
+Try using the querystring project-selector for some tasks:
+
+- Reporting a bug
+    - http://localhost:10200/bug_report_page.php?project_id=1
+    - http://localhost:10200/bug_report_page.php?project_id=2
+- Viewing issues
+    - http://localhost:10200/view_all_bug_page.php?project_id=1
+    - http://localhost:10200/view_all_bug_page.php?project_id=2
+- My View
+    - http://localhost:10200/my_view_page.php?project_id=1
+    - http://localhost:10200/my_view_page.php?project_id=2
